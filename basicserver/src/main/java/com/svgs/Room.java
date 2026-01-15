@@ -6,7 +6,7 @@ public class Room {
     public String player2;
     public int[][] ships1;
     public int[][] ships2;
-
+/*
     public Room(String player1, String player2, int[][] ships1, int[][] ships2){
         this.player1 = player1;
         this.player2 = player2;
@@ -20,6 +20,7 @@ public class Room {
         ships1 = null;
         ships2 = null;
     }
+*/
 
     public Room(){
         player1 = null;

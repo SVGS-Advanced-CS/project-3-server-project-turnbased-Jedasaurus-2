@@ -5,15 +5,27 @@ import java.util.ArrayList;
 
 public class Main {
 
-    public Room room = new Room();
+    public static Room room = new Room();
 
     public static void main(String[] args) {
         disableCORS();
         post("/newGame", (req,res) -> {
             ArrayList<Object> list = new ArrayList<>();
-            Object canJoin = new Boolean(true);
+            Object canJoin;
+            if (room.player1 == null || room.player2 == null){
+                canJoin = Boolean.TRUE;
+            }
+            else {
+                canJoin = Boolean.FALSE;
+            }
             Object playerName = req.body();
-            Object message = "Room def isn't full";
+            Object message;
+            if (canJoin == Boolean.TRUE) {
+                message = "Lobby Can Be Joined";
+            }
+            else {
+                message = "Lobby Can Not Be Joined";
+            }
             list.add(canJoin);
             list.add(playerName);
             list.add(message);
