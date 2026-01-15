@@ -13,19 +13,22 @@ public class Main {
     public static void main(String[] args) {
         disableCORS();
         post("/newGame", (req,res) -> {
-            ArrayList<Object> list = new ArrayList<>();
+            ArrayList<Object> list = new ArrayList<>(); //List to be returned
             Object canJoin;
             Object message;
             Object playerName = req.body();
-            if (room.player1 == null || room.player2 == null){
+            if (room.player1 != null) { //Add the player
+                room.player2 = playerName.toString();
+            } else {
+                room.player1 = playerName.toString();
+            }
+            if (room.player1 == null || room.player2 == null){ //Is the room NOT full?
                 canJoin = Boolean.TRUE;
                 message = "Lobby Can Be Joined";
-
             }
             else {
                 canJoin = Boolean.FALSE;
                 message = "Lobby Can Not Be Joined";
-
             }
             list.add(canJoin);
             list.add(playerName);
@@ -33,8 +36,13 @@ public class Main {
             return list;
         });
         get("/shipPlacements", (req,res) -> {
-            ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class);
-            return "Received";
+            ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); //Get the requested stuff
+            if (placements.playerName.equals(room.player1)) { //Is this player1's ships or player2's?
+                room.ships1 = placements.shipPlacements;
+            } else {
+                room.ships2 = placements.shipPlacements;
+            }
+            return "Received"; //Tell the server it has all gone through
         });
         get("/updateGame", (req,res) -> {
 
