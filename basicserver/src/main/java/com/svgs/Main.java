@@ -1,30 +1,31 @@
 package com.svgs;
 
+import com.google.gson.Gson;
+
 import static spark.Spark.*;
 import java.util.ArrayList;
 
 public class Main {
 
     public static Room room = new Room();
+    public static Gson gson = new Gson();
 
     public static void main(String[] args) {
         disableCORS();
         post("/newGame", (req,res) -> {
             ArrayList<Object> list = new ArrayList<>();
             Object canJoin;
+            Object message;
+            Object playerName = req.body();
             if (room.player1 == null || room.player2 == null){
                 canJoin = Boolean.TRUE;
+                message = "Lobby Can Be Joined";
+
             }
             else {
                 canJoin = Boolean.FALSE;
-            }
-            Object playerName = req.body();
-            Object message;
-            if (canJoin == Boolean.TRUE) {
-                message = "Lobby Can Be Joined";
-            }
-            else {
                 message = "Lobby Can Not Be Joined";
+
             }
             list.add(canJoin);
             list.add(playerName);
@@ -32,10 +33,12 @@ public class Main {
             return list;
         });
         get("/shipPlacements", (req,res) -> {
-            return null;
+            ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class);
+            return "Received";
         });
         get("/updateGame", (req,res) -> {
-            return null;
+
+            return "";
         });
         post("/makeMove", (req,res) -> {
             return null;
