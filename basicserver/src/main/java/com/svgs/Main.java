@@ -1,14 +1,33 @@
 package com.svgs;
 
 import static spark.Spark.*;
+import java.util.ArrayList;
 
 public class Main {
 
+    public Room room = new Room();
+
     public static void main(String[] args) {
         disableCORS();
-
-        
-
+        post("/newGame", (req,res) -> {
+            ArrayList<Object> list = new ArrayList<>();
+            Object canJoin = new Boolean(true);
+            Object playerName = req.body();
+            Object message = "Room def isn't full";
+            list.add(canJoin);
+            list.add(playerName);
+            list.add(message);
+            return list;
+        });
+        get("/shipPlacements", (req,res) -> {
+            return null;
+        });
+        get("/updateGame", (req,res) -> {
+            return null;
+        });
+        post("/makeMove", (req,res) -> {
+            return null;
+        });
     }
 
     public static void disableCORS() {
@@ -23,7 +42,6 @@ public class Main {
             if (accessControlRequestHeaders != null) {
                 res.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
             }
-
             String accessControlRequestMethod = req.headers("Access-Control-Request-Method");
             if (accessControlRequestMethod != null) {
                 res.header("Access-Control-Allow-Methods", accessControlRequestMethod);
