@@ -50,7 +50,7 @@ public class Main {
                 updateGameReturn.isStarted = true;
                 updateGameReturn.turn = room.player2;
             }
-            if (req.body().equals(room.player2)) {
+            if (req.body().equals(room.player2)) { //If its P2's turn...
                 updateGameReturn.userBoard = room.ships2;
                 updateGameReturn.guessBoard = room.guessBoard2;
                 updateGameReturn.isOver = false;
