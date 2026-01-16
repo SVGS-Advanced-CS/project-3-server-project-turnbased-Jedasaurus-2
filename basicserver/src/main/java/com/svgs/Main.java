@@ -3,7 +3,6 @@ package com.svgs;
 import com.google.gson.Gson;
 
 import static spark.Spark.*;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -13,40 +12,52 @@ public class Main {
     public static void main(String[] args) {
         disableCORS();
         post("/newGame", (req,res) -> {
-            ArrayList<Object> list = new ArrayList<>(); //List to be returned
-            Object canJoin;
-            Object message;
-            Object playerName = req.body();
+            NewGameReturn newGameReturn = new NewGameReturn(); //Object to be returned
+            newGameReturn.playerName = req.body(); //Return the players name? IDK why I did this
             if (room.player1 != null) { //Add the player
-                room.player2 = playerName.toString();
+                room.player2 = newGameReturn.playerName;
             } else {
-                room.player1 = playerName.toString();
+                room.player1 = newGameReturn.playerName;
             }
             if (room.player1 == null || room.player2 == null){ //Is the room NOT full?
-                canJoin = Boolean.TRUE;
-                message = "Lobby Can Be Joined";
+                newGameReturn.canJoin = Boolean.TRUE;
+                newGameReturn.message = "Lobby Can Be Joined";
             }
             else {
-                canJoin = Boolean.FALSE;
-                message = "Lobby Can Not Be Joined";
+                newGameReturn.canJoin = Boolean.FALSE;
+                newGameReturn.message = "Lobby Can Not Be Joined";
             }
-            list.add(canJoin);
-            list.add(playerName);
-            list.add(message);
-            return list;
+            return newGameReturn;
         });
         get("/shipPlacements", (req,res) -> {
             ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); //Get the requested stuff
             if (placements.playerName.equals(room.player1)) { //Is this player1's ships or player2's?
                 room.ships1 = placements.shipPlacements;
-            } else {
+                room.guessBoard1 = new int[10][10];
+            }
+            if (placements.playerName.equals(room.player2)) {
                 room.ships2 = placements.shipPlacements;
+                room.guessBoard2 = new int[10][10];
             }
             return "Received"; //Tell the server it has all gone through
         });
         get("/updateGame", (req,res) -> {
-
-            return "";
+            UpdateGameReturn updateGameReturn = new UpdateGameReturn();
+            if (req.body().equals(room.player1)) { //Is it currently P1's or P2's turn
+                updateGameReturn.userBoard = room.ships1;
+                updateGameReturn.guessBoard = room.guessBoard1;
+                updateGameReturn.isOver = false;
+                updateGameReturn.isStarted = true;
+                updateGameReturn.turn = room.player2;
+            }
+            if (req.body().equals(room.player2)) {
+                updateGameReturn.userBoard = room.ships2;
+                updateGameReturn.guessBoard = room.guessBoard2;
+                updateGameReturn.isOver = false;
+                updateGameReturn.isStarted = true;
+                updateGameReturn.turn = room.player1;
+            }
+            return updateGameReturn;
         });
         post("/makeMove", (req,res) -> {
             return null;
