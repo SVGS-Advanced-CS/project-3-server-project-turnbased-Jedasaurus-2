@@ -35,7 +35,7 @@ public class Main {
                 room.ships1 = placements.shipPlacements;
                 room.guessBoard1 = new int[10][10];
             }
-            if (placements.playerName.equals(room.player2)) {
+            if (placements.playerName.equals(room.player2)) { //Repeat for P2
                 room.ships2 = placements.shipPlacements;
                 room.guessBoard2 = new int[10][10];
             }
