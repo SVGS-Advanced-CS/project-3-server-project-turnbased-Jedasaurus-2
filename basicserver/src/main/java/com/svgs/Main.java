@@ -19,8 +19,11 @@ public class Main {
                 room.player1 = newGameReturn.playerName; // If not, make player1
             } else if (room.player2.equals(np)) {
                 room.player2 = newGameReturn.playerName; // If they are, make player2
+                newGameReturn.canJoin = Boolean.FALSE;
+                newGameReturn.message = "Lobby Can Not Be Joined";
+                return gson.toJson(newGameReturn);
             }
-            if (!room.player1.equals(np) && !room.player2.equals(np)) { // Is there a open slot in the lobby?
+            if (!room.player1.equals(np) || !room.player2.equals(np)) { // Is there a open slot in the lobby?
                 newGameReturn.canJoin = Boolean.TRUE;
                 newGameReturn.message = "Lobby Can Be Joined";
             } else { // otherwise, reject them
