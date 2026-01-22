@@ -26,8 +26,8 @@ public class Room {
 */
 
     public Room(){
-        player1 = null;
-        player2 = null;
+        player1 = "No Player";
+        player2 = "No Player";
         ships1 = null;
         ships2 = null;
         guessBoard1 = null;

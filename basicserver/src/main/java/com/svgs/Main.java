@@ -7,6 +7,7 @@ public class Main {
 
     public static Room room = new Room();
     public static Gson gson = new Gson();
+    private static String np = "No Player";
 
     public static void main(String[] args) {
         System.out.println("Hello, world");
@@ -14,15 +15,15 @@ public class Main {
         post("/newGame", (req, res) -> {
             NewGameReturn newGameReturn = new NewGameReturn(); // Object to be returned
             newGameReturn.playerName = req.body(); // Return the players name? IDK why I did this
-            if (room.player1 != null) { // Add the player
-                room.player2 = newGameReturn.playerName;
-            } else {
-                room.player1 = newGameReturn.playerName;
-            }
-            if (room.player1 == null || room.player2 == null) { // Is the room NOT full?
-                newGameReturn.canJoin = Boolean.TRUE;
-                newGameReturn.message = "Lobby Can Be Joined";
-            } else {
+            if (!room.player1.equals(np) && !room.player2.equals(np)) { //Is there a open slot in the lobby?
+                if (room.player1.equals(np)) { // Is player1 in the lobby
+                    room.player1 = newGameReturn.playerName; // If not, make player1
+                } else {
+                    room.player2 = newGameReturn.playerName; // If they are, make player2
+                }
+                    newGameReturn.canJoin = Boolean.TRUE;
+                    newGameReturn.message = "Lobby Can Be Joined";
+            } else { //otherwise, reject them
                 newGameReturn.canJoin = Boolean.FALSE;
                 newGameReturn.message = "Lobby Can Not Be Joined";
             }
@@ -48,7 +49,7 @@ public class Main {
                 updateGameReturn.isOver = false;
                 updateGameReturn.isStarted = true;
                 updateGameReturn.turn = room.player2;
-                if (room.player2 != null) { // is there another player
+                if (!room.player2.equals(np)) { // is there another player
                     updateGameReturn.otherPlayer = room.player2;
                 }
                 if (!Extras.find(room.ships1, 1)) { // Does player1 have any ships left?
