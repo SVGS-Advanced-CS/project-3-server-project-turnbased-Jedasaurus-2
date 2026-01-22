@@ -26,7 +26,7 @@ public class Main {
                 newGameReturn.canJoin = Boolean.FALSE;
                 newGameReturn.message = "Lobby Can Not Be Joined";
             }
-            return newGameReturn;
+            return gson.toJson(newGameReturn);
         });
         get("/shipPlacements", (req, res) -> {
             ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); // Get the requested stuff
@@ -38,7 +38,7 @@ public class Main {
                 room.ships2 = placements.shipPlacements;
                 room.guessBoard2 = new int[10][10];
             }
-            return "Received"; // Tell the server it has all gone through
+            return gson.toJson("Received"); // Tell the server it has all gone through
         });
         get("/updateGame", (req, res) -> {
             UpdateGameReturn updateGameReturn = new UpdateGameReturn();
@@ -48,6 +48,15 @@ public class Main {
                 updateGameReturn.isOver = false;
                 updateGameReturn.isStarted = true;
                 updateGameReturn.turn = room.player2;
+                if (room.player2 != null) { // is there another player
+                    updateGameReturn.otherPlayer = room.player2;
+                }
+                if (!Extras.find(room.ships1, 1)) { // Does player1 have any ships left?
+                    // Player2 wins
+                }
+                if (!Extras.find(room.ships2, 1)) { // Does player2 have any ships left?
+                    // Player1 wins
+                }
             }
             if (req.body().equals(room.player2)) { // If its P2's turn...
                 updateGameReturn.userBoard = room.ships2;
@@ -55,30 +64,37 @@ public class Main {
                 updateGameReturn.isOver = false;
                 updateGameReturn.isStarted = true;
                 updateGameReturn.turn = room.player1;
+                if (room.player1 != null) { // is there another player?
+                    updateGameReturn.otherPlayer = room.player1;
+                }
             }
-            return updateGameReturn;
+            return gson.toJson(updateGameReturn);
         });
         post("/makeMove", (req, res) -> {
             MakeMove request = gson.fromJson(req.body(), MakeMove.class);
             if (request.playerName.equals(room.player1)) {
-                int[] guess = request.guess;
-                if (room.ships2[guess[0]][guess[1]] == 1) { // Is there a ship (1) there?
+                int[] guess = request.guess; // Guess is an array of x and y
+                if (room.ships2[guess[0]][guess[1]] == 0) {
                     room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                     room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
+                }
+                if (room.ships2[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
+                    room.guessBoard1[guess[0]][guess[1]] = 1; // 2 is a hit on the guessboard
+                    room.ships2[guess[0]][guess[1]] = 3; // 2 is a hit ship on your own board
                 } else {
                     // Can't do that
                 }
             }
             if (request.playerName.equals(room.player2)) {
                 int[] guess = request.guess;
-                if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there?
+                if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
                     room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                     room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
                 } else {
                     // Can't do that
                 }
             }
-            return "";
+            return gson.toJson("");
         });
     }
 
