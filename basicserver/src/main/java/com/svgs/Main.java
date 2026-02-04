@@ -10,8 +10,9 @@ public class Main {
     private static final String np = "No Player";
 
     public static void main(String[] args) {
-        System.out.println("Hello, world");
+        System.out.println("Hello, world"); //So I know it started
         disableCORS();
+        port(4567);
         post("/newGame", (req, res) -> {
             NewGameReturn newGameReturn = new NewGameReturn(); // Object to be returned
             newGameReturn.playerName = req.body(); // Return the players name? IDK why I did this
