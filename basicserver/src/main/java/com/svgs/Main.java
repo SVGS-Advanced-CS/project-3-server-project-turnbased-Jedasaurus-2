@@ -7,7 +7,7 @@ public class Main {
 
     public static Room room = new Room();
     public static Gson gson = new Gson();
-    private static String np = "No Player";
+    private static final String np = "No Player";
 
     public static void main(String[] args) {
         System.out.println("Hello, world");
@@ -23,10 +23,10 @@ public class Main {
                 newGameReturn.message = "Lobby Can Be Joined";
                 return gson.toJson(newGameReturn);
             }
-            if (!room.player1.equals(np) || !room.player2.equals(np)) { // Is there a open slot in the lobby?
+            if (!room.player1.equals(np) || !room.player2.equals(np)) { // Is there an open slot in the lobby?
                 newGameReturn.canJoin = Boolean.TRUE;
                 newGameReturn.message = "Lobby Can Be Joined";
-            } else { // otherwise, reject them
+            } else {                                                    // otherwise, reject them
                 newGameReturn.canJoin = Boolean.FALSE;
                 newGameReturn.message = "Lobby Can Not Be Joined";
             }
@@ -55,11 +55,13 @@ public class Main {
                 if (!room.player2.equals(np)) { // is there another player
                     updateGameReturn.otherPlayer = room.player2;
                 }
-                if (!Extras.find(room.ships1, 1)) { // Does player1 have any ships left?
-                    // Player2 wins
+                if (!ExtraMethods.find(room.ships1, 1)) { // Does player1 have any ships left? If  not...
+                    updateGameReturn.isOver = true;
+                    updateGameReturn.message = "Player 2 wins";
                 }
-                if (!Extras.find(room.ships2, 1)) { // Does player2 have any ships left?
-                    // Player1 wins
+                if (!ExtraMethods.find(room.ships2, 1)) { // Does player2 have any ships left? If not...
+                    updateGameReturn.isOver = true;
+                    updateGameReturn.message = "Player 1 wins";
                 }
             }
             if (req.body().equals(room.player2)) { // If its P2's turn...

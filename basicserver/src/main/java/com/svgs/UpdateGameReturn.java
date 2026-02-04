@@ -7,5 +7,6 @@ public class UpdateGameReturn {
     public int[][] userBoard;
     public String turn; //The user who should go next
     public String otherPlayer = "No Player";
+    public String message;
     //So if this returns player2 the front end should make it player2's turn
 }
