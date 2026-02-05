@@ -55,14 +55,6 @@ public class Main {
                 if (!room.player2.equals(np)) { // is there another player
                     updateGameReturn.otherPlayer = room.player2;
                 }
-                if (!ExtraMethods.find(room.ships1, 1)) { // Does player1 have any ships left? If  not...
-                    updateGameReturn.isOver = true;
-                    updateGameReturn.message = "Player 2 wins";
-                }
-                if (!ExtraMethods.find(room.ships2, 1)) { // Does player2 have any ships left? If not...
-                    updateGameReturn.isOver = true;
-                    updateGameReturn.message = "Player 1 wins";
-                }
             }
             if (req.body().equals(room.player2)) { // If its P2's turn...
                 updateGameReturn.userBoard = room.ships2;
@@ -73,6 +65,14 @@ public class Main {
                 if (room.player1 != null) { // is there another player?
                     updateGameReturn.otherPlayer = room.player1;
                 }
+            }
+            if (!ExtraMethods.find(room.ships1, 1)) { // Does player1 have any ships left? If  not...
+                updateGameReturn.isOver = true;
+                updateGameReturn.message = "Player 2 wins";
+            }
+            if (!ExtraMethods.find(room.ships2, 1)) { // Does player2 have any ships left? If not...
+                updateGameReturn.isOver = true;
+                updateGameReturn.message = "Player 1 wins";
             }
             return gson.toJson(updateGameReturn);
         });
