@@ -1,6 +1,7 @@
 package com.svgs;
 
 public class ShipPlacements {
+
     public int[][] shipPlacements;
     public String playerName;
 

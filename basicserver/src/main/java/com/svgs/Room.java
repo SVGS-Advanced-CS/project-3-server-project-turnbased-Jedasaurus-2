@@ -8,6 +8,7 @@ public class Room {
     public int[][] ships2;
     public int[][] guessBoard1;
     public int[][] guessBoard2;
+    public String turn;
 
 /*
     public Room(String player1, String player2, int[][] ships1, int[][] ships2){

@@ -1,6 +1,7 @@
 package com.svgs;
 
 public class UpdateGameReturn {
+
     public boolean isStarted;
     public boolean isOver;
     public int[][] guessBoard;

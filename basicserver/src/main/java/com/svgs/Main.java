@@ -11,29 +11,28 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello, world"); //So I know it started
-        disableCORS();
         port(4567);
+        disableCORS();
         post("/newGame", (req, res) -> {
             NewGameReturn newGameReturn = new NewGameReturn(); // Object to be returned
             newGameReturn.playerName = req.body(); // Return the players name? IDK why I did this
             if (room.player1.equals(np)) { // Is player1 in the lobby
                 room.player1 = newGameReturn.playerName; // If not, make player1
+                newGameReturn.canJoin = Boolean.TRUE;
+                newGameReturn.message = "Lobby Can Be Joined";
             } else if (room.player2.equals(np)) {
                 room.player2 = newGameReturn.playerName; // If they are, make player2
                 newGameReturn.canJoin = Boolean.TRUE;
                 newGameReturn.message = "Lobby Can Be Joined";
                 return gson.toJson(newGameReturn);
-            }
-            if (!room.player1.equals(np) || !room.player2.equals(np)) { // Is there an open slot in the lobby?
-                newGameReturn.canJoin = Boolean.TRUE;
-                newGameReturn.message = "Lobby Can Be Joined";
             } else {                                                    // otherwise, reject them
                 newGameReturn.canJoin = Boolean.FALSE;
                 newGameReturn.message = "Lobby Can Not Be Joined";
             }
+            room.turn = room.player1;
             return gson.toJson(newGameReturn);
         });
-        get("/shipPlacements", (req, res) -> {
+        post("/shipPlacements", (req, res) -> {
             ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); // Get the requested stuff
             if (placements.playerName.equals(room.player1)) { // Is this player1's ships or player2's?
                 room.ships1 = placements.shipPlacements;
@@ -79,27 +78,48 @@ public class Main {
         });
         post("/makeMove", (req, res) -> {
             MakeMove request = gson.fromJson(req.body(), MakeMove.class);
+            MakeMoveReturn makeMoveReturn = new MakeMoveReturn();
             if (request.playerName.equals(room.player1)) {
                 int[] guess = request.guess; // Guess is an array of x and y
                 if (room.ships2[guess[0]][guess[1]] == 0) {
                     room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                     room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
+                    room.turn = room.player2;
+                    makeMoveReturn.turn = room.turn;
+                } else {
+                    // Trying to make illegal move
+                    makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.message = "Illegal Move";
                 }
                 if (room.ships2[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
                     room.guessBoard1[guess[0]][guess[1]] = 1; // 2 is a hit on the guessboard
                     room.ships2[guess[0]][guess[1]] = 3; // 2 is a hit ship on your own board
+                    room.turn = room.player2;
+                    makeMoveReturn.turn = room.turn;
                 } else {
-                    // Can't do that
-                }
+                    makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.message = "Illegal Move";                }
             }
             if (request.playerName.equals(room.player2)) {
-                int[] guess = request.guess;
-                if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
+                int[] guess = request.guess; // Guess is an array of x and y
+                if (room.ships1[guess[0]][guess[1]] == 0) {
                     room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                     room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
+                    room.turn = room.player1;
+                    makeMoveReturn.turn = room.turn;
                 } else {
-                    // Can't do that
+                    // Trying to make illegal move
+                    makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.message = "Illegal Move";
                 }
+                if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
+                    room.guessBoard2[guess[0]][guess[1]] = 1; // 2 is a hit on the guessboard
+                    room.ships1[guess[0]][guess[1]] = 3; // 2 is a hit ship on your own board
+                    room.turn = room.player1;
+                    makeMoveReturn.turn = room.turn;
+                } else {
+                    makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.message = "Illegal Move";                }
             }
             return gson.toJson("");
         });
