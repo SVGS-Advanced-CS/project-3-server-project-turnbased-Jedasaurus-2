@@ -99,7 +99,7 @@ public class Main {
                         makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
                     }
                 }
-                if (request.playerName.equals(room.player2)) {
+                if (request.playerName.equals(room.player2)) { // 0 is blank, 1 is a miss, 2 is a hit, 3 is a ship
                     int[] guess = request.guess; // Guess is an array of x and y
                     if (room.ships1[guess[0]][guess[1]] == 0) { // Did they miss?
                         room.guessBoard2[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
