@@ -46,7 +46,8 @@ public class Main {
         });
         get("/updateGame", (req, res) -> {
             UpdateGameReturn updateGameReturn = new UpdateGameReturn();
-            if (req.body().equals(room.player1)) { // Is it currently P1's or P2's turn
+            UpdateGame updateGame = new UpdateGame(req.body());
+            if (updateGame.User.equals(room.player1)) { // Is it currently P1's or P2's turn
                 updateGameReturn.userBoard = room.ships1;
                 updateGameReturn.guessBoard = room.guessBoard1;
                 updateGameReturn.isOver = false;
@@ -56,7 +57,7 @@ public class Main {
                     updateGameReturn.otherPlayer = room.player2;
                 }
             }
-            if (req.body().equals(room.player2)) { // If its P2's turn...
+            if (updateGame.User.equals(room.player2)) { // If its P2's turn...
                 updateGameReturn.userBoard = room.ships2;
                 updateGameReturn.guessBoard = room.guessBoard2;
                 updateGameReturn.isOver = false;
