@@ -77,7 +77,7 @@ public class Main {
             }
             return gson.toJson(updateGameReturn);
         });
-        post("/makeMove", (req, res) -> {
+        post("/makeMove", (req, res) -> { // 0 is blank, 1 is a miss, 2 is a hit, 3 is a ship
             MakeMove request = gson.fromJson(req.body(), MakeMove.class);
             MakeMoveReturn makeMoveReturn = new MakeMoveReturn();
             if (request.playerName.equals(room.turn)) {
@@ -99,7 +99,7 @@ public class Main {
                         makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
                     }
                 }
-                if (request.playerName.equals(room.player2)) { // 0 is blank, 1 is a miss, 2 is a hit, 3 is a ship
+                if (request.playerName.equals(room.player2)) {
                     int[] guess = request.guess; // Guess is an array of x and y
                     if (room.ships1[guess[0]][guess[1]] == 0) { // Did they miss?
                         room.guessBoard2[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
