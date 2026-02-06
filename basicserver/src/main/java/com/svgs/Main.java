@@ -83,45 +83,42 @@ public class Main {
                 int[] guess = request.guess; // Guess is an array of x and y
                 if (room.ships2[guess[0]][guess[1]] == 0) {
                     room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
-                    room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
+                    room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit ship on the opponents board
                     room.turn = room.player2;
                     makeMoveReturn.turn = room.turn;
-                } else {
-                    // Trying to make illegal move
-                    makeMoveReturn.turn = room.turn;
-                    makeMoveReturn.message = "Illegal Move";
-                }
+                    makeMoveReturn.message = "Hit";
+                } else
                 if (room.ships2[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
-                    room.guessBoard1[guess[0]][guess[1]] = 1; // 2 is a hit on the guessboard
-                    room.ships2[guess[0]][guess[1]] = 3; // 2 is a hit ship on your own board
+                    room.guessBoard1[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
+                    room.ships2[guess[0]][guess[1]] = 3; // 3 is a miss on the opponents board
                     room.turn = room.player2;
-                    makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.turn = room.player2;
+                    makeMoveReturn.message = "Miss";
                 } else {
-                    makeMoveReturn.turn = room.turn;
-                    makeMoveReturn.message = "Illegal Move";                }
+                     // Trying to make illegal move
+                    makeMoveReturn.message = "Illegal Move";
+                 }
             }
             if (request.playerName.equals(room.player2)) {
                 int[] guess = request.guess; // Guess is an array of x and y
                 if (room.ships1[guess[0]][guess[1]] == 0) {
                     room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
-                    room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit ship on your own board
+                    room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit ship on the opponents board
                     room.turn = room.player1;
                     makeMoveReturn.turn = room.turn;
+                    makeMoveReturn.message = "Hit";
+                } else if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty) if not...
+                    room.guessBoard2[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
+                    room.ships1[guess[0]][guess[1]] = 3; // 3 is a miss on the opponents board
+                    room.turn = room.player2;
+                    makeMoveReturn.turn = room.player1;
+                    makeMoveReturn.message = "Miss";
                 } else {
                     // Trying to make illegal move
-                    makeMoveReturn.turn = room.turn;
                     makeMoveReturn.message = "Illegal Move";
                 }
-                if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
-                    room.guessBoard2[guess[0]][guess[1]] = 1; // 2 is a hit on the guessboard
-                    room.ships1[guess[0]][guess[1]] = 3; // 2 is a hit ship on your own board
-                    room.turn = room.player1;
-                    makeMoveReturn.turn = room.turn;
-                } else {
-                    makeMoveReturn.turn = room.turn;
-                    makeMoveReturn.message = "Illegal Move";                }
             }
-            return gson.toJson("");
+            return gson.toJson(makeMoveReturn);
         });
     }
 
