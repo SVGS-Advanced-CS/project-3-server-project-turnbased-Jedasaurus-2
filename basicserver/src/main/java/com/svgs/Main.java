@@ -1,6 +1,9 @@
 package com.svgs;
 
 import com.google.gson.Gson;
+
+import java.util.Arrays;
+
 import static spark.Spark.*;
 
 public class Main {
@@ -42,6 +45,9 @@ public class Main {
                 room.ships2 = placements.shipPlacements;
                 room.guessBoard2 = new int[10][10];
             }
+            if (!Arrays.deepEquals(room.guessBoard1, new int[10][10]) && !Arrays.deepEquals(room.guessBoard2, new int[10][10])) {
+                room.isStarted = true; // Has the game started? Have both submitted their ships?
+            }
             return gson.toJson("Received"); // Tell the server it has all gone through
         });
         get("/updateGame", (req, res) -> {
@@ -50,8 +56,8 @@ public class Main {
             if (updateGame.User.equals(room.player1)) { // Is it currently P1's or P2's turn
                 updateGameReturn.userBoard = room.ships1;
                 updateGameReturn.guessBoard = room.guessBoard1;
-                updateGameReturn.isOver = false;
-                updateGameReturn.isStarted = true;
+                updateGameReturn.isOver = room.isOver;
+                updateGameReturn.isStarted = room.isStarted;
                 updateGameReturn.turn = room.turn;
                 if (!room.player2.equals(np)) { // is there another player
                     updateGameReturn.otherPlayer = room.player2;
@@ -60,8 +66,8 @@ public class Main {
             if (updateGame.User.equals(room.player2)) { // If its P2's turn...
                 updateGameReturn.userBoard = room.ships2;
                 updateGameReturn.guessBoard = room.guessBoard2;
-                updateGameReturn.isOver = false;
-                updateGameReturn.isStarted = true;
+                updateGameReturn.isOver = room.isOver;
+                updateGameReturn.isStarted = room.isStarted;
                 updateGameReturn.turn = room.turn;
                 if (room.player1 != null) { // is there another player?
                     updateGameReturn.otherPlayer = room.player1;
@@ -69,10 +75,12 @@ public class Main {
             }
             if (!ExtraMethods.find(room.ships1, 3)) { // Does player1 have any ships left? If  not...
                 updateGameReturn.isOver = true;
+                room.isOver = true;
                 updateGameReturn.message = "Player 2 wins";
             }
             if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
                 updateGameReturn.isOver = true;
+                room.isOver = true;
                 updateGameReturn.message = "Player 1 wins";
             }
             return gson.toJson(updateGameReturn);

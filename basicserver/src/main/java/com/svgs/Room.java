@@ -9,6 +9,8 @@ public class Room {
     public int[][] guessBoard1; //0, blank, 1 miss, 2 hit
     public int[][] guessBoard2;
     public String turn;
+    public boolean isStarted;
+    public boolean isOver;
 
 /*
     public Room(String player1, String player2, int[][] ships1, int[][] ships2){
@@ -33,5 +35,7 @@ public class Room {
         ships2 = new int[10][10];
         guessBoard1 = new int[10][10];
         guessBoard2 = new int[10][10];
+        isStarted = false;
+        isOver = false;
     }
 }
