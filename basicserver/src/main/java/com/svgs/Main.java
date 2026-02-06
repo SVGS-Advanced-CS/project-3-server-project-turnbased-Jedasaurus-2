@@ -52,7 +52,7 @@ public class Main {
                 updateGameReturn.guessBoard = room.guessBoard1;
                 updateGameReturn.isOver = false;
                 updateGameReturn.isStarted = true;
-                updateGameReturn.turn = room.player2;
+                updateGameReturn.turn = room.turn;
                 if (!room.player2.equals(np)) { // is there another player
                     updateGameReturn.otherPlayer = room.player2;
                 }
@@ -62,7 +62,7 @@ public class Main {
                 updateGameReturn.guessBoard = room.guessBoard2;
                 updateGameReturn.isOver = false;
                 updateGameReturn.isStarted = true;
-                updateGameReturn.turn = room.player1;
+                updateGameReturn.turn = room.turn;
                 if (room.player1 != null) { // is there another player?
                     updateGameReturn.otherPlayer = room.player1;
                 }
@@ -80,45 +80,47 @@ public class Main {
         post("/makeMove", (req, res) -> {
             MakeMove request = gson.fromJson(req.body(), MakeMove.class);
             MakeMoveReturn makeMoveReturn = new MakeMoveReturn();
-            if (request.playerName.equals(room.player1)) {
-                int[] guess = request.guess; // Guess is an array of x and y
-                if (room.ships2[guess[0]][guess[1]] == 0) {
-                    room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
-                    room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit ship on the opponents board
-                    room.turn = room.player2;
-                    makeMoveReturn.turn = room.turn;
-                    makeMoveReturn.message = "Hit";
-                } else
-                if (room.ships2[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty)
-                    room.guessBoard1[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
-                    room.ships2[guess[0]][guess[1]] = 3; // 3 is a miss on the opponents board
-                    room.turn = room.player2;
-                    makeMoveReturn.turn = room.player2;
-                    makeMoveReturn.message = "Miss";
-                } else {
-                     // Trying to make illegal move
-                    makeMoveReturn.message = "Illegal Move";
-                 }
-            }
-            if (request.playerName.equals(room.player2)) {
-                int[] guess = request.guess; // Guess is an array of x and y
-                if (room.ships1[guess[0]][guess[1]] == 0) {
-                    room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
-                    room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit ship on the opponents board
-                    room.turn = room.player1;
-                    makeMoveReturn.turn = room.turn;
-                    makeMoveReturn.message = "Hit";
-                } else if (room.ships1[guess[0]][guess[1]] == 1) { // Is there a ship (1) there? (0 is empty) if not...
-                    room.guessBoard2[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
-                    room.ships1[guess[0]][guess[1]] = 3; // 3 is a miss on the opponents board
-                    room.turn = room.player2;
-                    makeMoveReturn.turn = room.player1;
-                    makeMoveReturn.message = "Miss";
-                } else {
-                    // Trying to make illegal move
-                    makeMoveReturn.message = "Illegal Move";
+            if (request.playerName.equals(room.turn)) {
+                if (request.playerName.equals(room.player1)) {
+                    int[] guess = request.guess; // Guess is an array of x and y
+                    if (room.ships2[guess[0]][guess[1]] == 0) { // Did they miss?
+                        room.guessBoard1[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
+                        room.ships2[guess[0]][guess[1]] = 1; // 1 is a miss on the opponents board
+                        room.turn = room.player2;
+                        makeMoveReturn.turn = room.turn;
+                        makeMoveReturn.message = "Hit";
+                    } else if (room.ships2[guess[0]][guess[1]] == 3) { // Did they hit?
+                        room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
+                        room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit on the opponents board
+                        room.turn = room.player2;
+                        makeMoveReturn.turn = room.player2;
+                        makeMoveReturn.message = "Miss";
+                    } else { //If they have already guessed?
+                        makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
+                    }
                 }
+                if (request.playerName.equals(room.player2)) {
+                    int[] guess = request.guess; // Guess is an array of x and y
+                    if (room.ships1[guess[0]][guess[1]] == 0) { // Did they miss?
+                        room.guessBoard2[guess[0]][guess[1]] = 1; // 1 is a miss on the guessboard
+                        room.ships1[guess[0]][guess[1]] = 1; // 1 is a miss on the opponents board
+                        room.turn = room.player1;
+                        makeMoveReturn.turn = room.turn;
+                        makeMoveReturn.message = "Hit";
+                    } else if (room.ships1[guess[0]][guess[1]] == 3) { // Did they hit?
+                        room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
+                        room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit on the opponents board
+                        room.turn = room.player1;
+                        makeMoveReturn.turn = room.player1;
+                        makeMoveReturn.message = "Miss";
+                    } else { //If they have already guessed?
+                        makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
+                    }
+                }
+                return gson.toJson(makeMoveReturn);
             }
+            makeMoveReturn.turn = room.turn;
+            makeMoveReturn.message = "Not your turn";
             return gson.toJson(makeMoveReturn);
         });
     }
