@@ -67,11 +67,11 @@ public class Main {
                     updateGameReturn.otherPlayer = room.player1;
                 }
             }
-            if (!ExtraMethods.find(room.ships1, 1)) { // Does player1 have any ships left? If  not...
+            if (!ExtraMethods.find(room.ships1, 3)) { // Does player1 have any ships left? If  not...
                 updateGameReturn.isOver = true;
                 updateGameReturn.message = "Player 2 wins";
             }
-            if (!ExtraMethods.find(room.ships2, 1)) { // Does player2 have any ships left? If not...
+            if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
                 updateGameReturn.isOver = true;
                 updateGameReturn.message = "Player 1 wins";
             }
