@@ -5,7 +5,7 @@ public class UpdateGame {
     public String User;
 
     public UpdateGame(String User){
-        this.User=User;
+        this.User = User;
     }
 
 }

@@ -46,7 +46,7 @@ public class Main {
         });
         get("/updateGame", (req, res) -> {
             UpdateGameReturn updateGameReturn = new UpdateGameReturn();
-            UpdateGame updateGame = new UpdateGame(req.body());
+            UpdateGame updateGame = new UpdateGame(req.queryParams("User"));
             if (updateGame.User.equals(room.player1)) { // Is it currently P1's or P2's turn
                 updateGameReturn.userBoard = room.ships1;
                 updateGameReturn.guessBoard = room.guessBoard1;
