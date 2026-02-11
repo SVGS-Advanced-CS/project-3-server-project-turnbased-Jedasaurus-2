@@ -39,14 +39,18 @@ public class Main {
             ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); // Get the requested stuff
             if (placements.playerName.equals(room.player1)) { // Is this player1's ships or player2's?
                 room.ships1 = placements.shipPlacements;
+                System.out.println(Arrays.deepToString(room.ships1));
                 room.guessBoard1 = new int[10][10];
+                room.playersStarted[0] = Boolean.TRUE;
             }
             if (placements.playerName.equals(room.player2)) { // Repeat for P2
                 room.ships2 = placements.shipPlacements;
+                System.out.println(Arrays.deepToString(room.ships2));
                 room.guessBoard2 = new int[10][10];
+                room.playersStarted[1] = Boolean.TRUE;
             }
-            if (!Arrays.deepEquals(room.guessBoard1, new int[10][10]) && !Arrays.deepEquals(room.guessBoard2, new int[10][10])) {
-                room.isStarted = true; // Has the game started? Have both submitted their ships?
+            if (room.playersStarted[0] && room.playersStarted[1]) {
+                room.isStarted = Boolean.TRUE;
             }
             return gson.toJson("Received"); // Tell the server it has all gone through
         });
@@ -74,11 +78,13 @@ public class Main {
                 }
             }
             if (!ExtraMethods.find(room.ships1, 3)) { // Does player1 have any ships left? If  not...
+                //System.out.println(Arrays.deepToString(room.ships1));
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 2 wins";
             }
             if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
+                //System.out.println(Arrays.deepToString(room.ships2));
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 1 wins";
@@ -96,13 +102,13 @@ public class Main {
                         room.ships2[guess[0]][guess[1]] = 1; // 1 is a miss on the opponents board
                         room.turn = room.player2;
                         makeMoveReturn.turn = room.turn;
-                        makeMoveReturn.message = "Hit";
+                        makeMoveReturn.message = "Miss";
                     } else if (room.ships2[guess[0]][guess[1]] == 3) { // Did they hit?
                         room.guessBoard1[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                         room.ships2[guess[0]][guess[1]] = 2; // 2 is a hit on the opponents board
                         room.turn = room.player2;
                         makeMoveReturn.turn = room.player2;
-                        makeMoveReturn.message = "Miss";
+                        makeMoveReturn.message = "Hit";
                     } else { //If they have already guessed?
                         makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
                     }
@@ -114,13 +120,13 @@ public class Main {
                         room.ships1[guess[0]][guess[1]] = 1; // 1 is a miss on the opponents board
                         room.turn = room.player1;
                         makeMoveReturn.turn = room.turn;
-                        makeMoveReturn.message = "Hit";
+                        makeMoveReturn.message = "Miss";
                     } else if (room.ships1[guess[0]][guess[1]] == 3) { // Did they hit?
                         room.guessBoard2[guess[0]][guess[1]] = 2; // 2 is a hit on the guessboard
                         room.ships1[guess[0]][guess[1]] = 2; // 2 is a hit on the opponents board
                         room.turn = room.player1;
                         makeMoveReturn.turn = room.player1;
-                        makeMoveReturn.message = "Miss";
+                        makeMoveReturn.message = "Hit";
                     } else { //If they have already guessed?
                         makeMoveReturn.message = "Illegal Move, cannot guess the same place twice";
                     }

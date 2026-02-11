@@ -11,6 +11,7 @@ public class Room {
     public String turn;
     public boolean isStarted;
     public boolean isOver;
+    public Boolean[] playersStarted = {Boolean.FALSE, Boolean.FALSE};
 
 /*
     public Room(String player1, String player2, int[][] ships1, int[][] ships2){
