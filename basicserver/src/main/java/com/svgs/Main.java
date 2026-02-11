@@ -39,17 +39,15 @@ public class Main {
             ShipPlacements placements = gson.fromJson(req.body(), ShipPlacements.class); // Get the requested stuff
             if (placements.playerName.equals(room.player1)) { // Is this player1's ships or player2's?
                 room.ships1 = placements.shipPlacements;
-                //System.out.println(Arrays.deepToString(room.ships1));
                 room.guessBoard1 = new int[10][10];
                 room.playersStarted[0] = Boolean.TRUE;
             }
             if (placements.playerName.equals(room.player2)) { // Repeat for P2
                 room.ships2 = placements.shipPlacements;
-                //System.out.println(Arrays.deepToString(room.ships2));
                 room.guessBoard2 = new int[10][10];
                 room.playersStarted[1] = Boolean.TRUE;
             }
-            if (room.playersStarted[0] && room.playersStarted[1]) {
+            if (room.playersStarted[0] && room.playersStarted[1]) { // Have both players submitted their ships?
                 room.isStarted = Boolean.TRUE;
             }
             return gson.toJson("Received"); // Tell the server it has all gone through
@@ -58,9 +56,8 @@ public class Main {
             UpdateGameReturn updateGameReturn = new UpdateGameReturn();
             UpdateGame updateGame = new UpdateGame(req.queryParams("User"));
             if (updateGame.User.equals(room.player1)) { // Is it currently P1's or P2's turn
-                //System.out.println(Arrays.deepToString(room.ships1));
-                updateGameReturn.userBoard = Arrays.copyOf(room.ships1, room.ships1.length);
-                updateGameReturn.guessBoard = Arrays.copyOf(room.guessBoard1, room.guessBoard1.length);
+                updateGameReturn.userBoard = Arrays.copyOf(room.ships1, room.ships1.length); //I did this during bug fixes. Bite me
+                updateGameReturn.guessBoard = Arrays.copyOf(room.guessBoard1, room.guessBoard1.length); //Also this
                 updateGameReturn.isOver = room.isOver;
                 updateGameReturn.isStarted = room.isStarted;
                 updateGameReturn.turn = room.turn;
@@ -69,9 +66,8 @@ public class Main {
                 }
             }
             if (updateGame.User.equals(room.player2)) { // If its P2's turn...
-                //System.out.println(Arrays.deepToString(room.ships2));
-                updateGameReturn.userBoard = Arrays.copyOf(room.ships2,room.ships2.length);
-                updateGameReturn.guessBoard = Arrays.copyOf(room.guessBoard2,room.guessBoard2.length);
+                updateGameReturn.userBoard = Arrays.copyOf(room.ships2,room.ships2.length); //Also this
+                updateGameReturn.guessBoard = Arrays.copyOf(room.guessBoard2,room.guessBoard2.length); //Also this
                 updateGameReturn.isOver = room.isOver;
                 updateGameReturn.isStarted = room.isStarted;
                 updateGameReturn.turn = room.turn;
@@ -80,16 +76,16 @@ public class Main {
                 }
             }
             if (!ExtraMethods.find(room.ships1, 3)) { // Does player1 have any ships left? If  not...
-                //System.out.println(Arrays.deepToString(room.ships1));
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 2 wins";
-            }
-            if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
+            } else if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
                 System.out.println(Arrays.deepToString(room.ships2));
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 1 wins";
+            } else {
+                room.isOver = false;
             }
             return gson.toJson(updateGameReturn);
         });
