@@ -75,17 +75,16 @@ public class Main {
                     updateGameReturn.otherPlayer = room.player1;
                 }
             }
-            if (!ExtraMethods.find(room.ships1, 3)) { // Does player1 have any ships left? If  not...
+            if (!ExtraMethods.find(room.ships1, 3) && ExtraMethods.find(room.ships1, 2)) { // Does player1 have any ships left? Do they have any destroyed ships?
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 2 wins";
-            } else if (!ExtraMethods.find(room.ships2, 3)) { // Does player2 have any ships left? If not...
+            }
+            if (!ExtraMethods.find(room.ships2, 3) && ExtraMethods.find(room.ships1, 2)) { // Does player2 have any ships left? Do they have any destroyed ships?
                 System.out.println(Arrays.deepToString(room.ships2));
                 updateGameReturn.isOver = true;
                 room.isOver = true;
                 updateGameReturn.message = "Player 1 wins";
-            } else {
-                room.isOver = false;
             }
             return gson.toJson(updateGameReturn);
         });
@@ -134,6 +133,11 @@ public class Main {
             makeMoveReturn.turn = room.turn;
             makeMoveReturn.message = "Not your turn";
             return gson.toJson(makeMoveReturn);
+        });
+        post("/restart", (req, res) -> {
+            room = new Room();
+            gson = new Gson();
+            return "Restarting";
         });
     }
 
