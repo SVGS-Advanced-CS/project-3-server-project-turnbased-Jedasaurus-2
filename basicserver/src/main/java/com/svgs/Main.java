@@ -8,9 +8,9 @@ import static spark.Spark.*;
 
 public class Main {
 
-    public static Room room = new Room();
-    public static Gson gson = new Gson();
-    private static final String np = "No Player";
+    public static Room room = new Room(); // All of the information the server needs to store
+    public static Gson gson = new Gson(); // To convert returned objects to JSON
+    private static final String np = "No Player"; // For convenience when checking whether the lobby is full
 
     public static void main(String[] args) {
         System.out.println("Hello, world"); //So I know it started
